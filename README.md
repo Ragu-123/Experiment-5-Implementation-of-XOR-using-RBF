@@ -71,15 +71,9 @@ bias edge
 ```
 import numpy as np
 import matplotlib.pyplot as plt
-import tensorflow as tf
-from tensorflow.keras.initializers import Initializer
-from tensorflow.keras.layers import Layer
-from tensorflow.keras.initializers import RandomUniform, Initializer, Constant
-
 def gaussian_rbf(x, landmark, gamma=1):
     return np.exp(-gamma * np.linalg.norm(x - landmark)**2)
-    
-    def end_to_end(X1, X2, ys, mu1, mu2):
+def end_to_end(X1, X2, ys, mu1, mu2):
     from_1 = [gaussian_rbf(i, mu1) for i in zip(X1, X2)]
     from_2 = [gaussian_rbf(i, mu2) for i in zip(X1, X2)]
     # plot
@@ -106,6 +100,8 @@ def gaussian_rbf(x, landmark, gamma=1):
     plt.title("Transformed Inputs: Linearly Seperable", fontsize=15)
     plt.legend()
 
+    # solving problem using matrices form
+    # AW = Y
     A = []
 
     for i, j in zip(from_1, from_2):
@@ -121,32 +117,18 @@ def gaussian_rbf(x, landmark, gamma=1):
     print(ys)
     print(f"Weights: {W}")
     return W
-    
-    def predict_matrix(point, weights):
+def predict_matrix(point, weights):
     gaussian_rbf_0 = gaussian_rbf(np.array(point), mu1)
     gaussian_rbf_1 = gaussian_rbf(np.array(point), mu2)
     A = np.array([gaussian_rbf_0, gaussian_rbf_1, 1])
     return np.round(A.dot(weights))
-    
-    x1 = np.array([0, 0, 1, 1])
+x1 = np.array([0, 0, 1, 1])
 x2 = np.array([0, 1, 0, 1])
 ys = np.array([0, 1, 1, 0])
 
 # centers
 mu1 = np.array([0, 1])
 mu2 = np.array([1, 0])
-
-w = end_to_end(x1, x2, ys, mu1, mu2)
-
-# testing
-
-print(f"Input:{np.array([0, 0])}, Predicted: {predict_matrix(np.array([0, 0]), w)}")
-print(f"Input:{np.array([0, 1])}, Predicted: {predict_matrix(np.array([0, 1]), w)}")
-print(f"Input:{np.array([1, 0])}, Predicted: {predict_matrix(np.array([1, 0]), w)}")
-print(f"Input:{np.array([1, 1])}, Predicted: {predict_matrix(np.array([1, 1]), w)}")
-
-mu1 = np.array([0, 0])
-mu2 = np.array([1, 1])
 
 w = end_to_end(x1, x2, ys, mu1, mu2)
 
